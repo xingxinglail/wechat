@@ -1,0 +1,52 @@
+@media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5)
+  .border-1px
+    &:after
+      -webkit-transform scaleY(.7)
+      transform scaleY(.7)
+  .border-t-1px
+    &:before
+      -webkit-transform scaleY(.7)
+      transform scaleY(.7)
+@media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2)
+  .border-1px
+    &:after
+      -webkit-transform scaleY(.5)
+      transform scaleY(.5)
+  .border-t-1px
+    &:before
+      -webkit-transform scaleY(.5)
+      transform scaleY(.5)
+
+.flexbox
+  display flex
+
+.flex
+  flex 1
+
+.absolute
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+
+.ac:active
+  background-color #ECECEC
+
+/* 淡入淡出 */
+.fade-enter-active, .fade-leave-active
+  transition opacity .3s ease
+.fade-enter, .fade-leave-to
+  opacity 0
+
+/* 从右进入,往左离开 */
+.move-enter-active, .move-leave-active
+  transition .3s ease
+.move-enter, .move-leave-to
+  transform translate3d(100%, 0, 0)
+
+/* 从下进入,往下离开 */
+.move-t-enter-active, .move-t-leave-active
+  transition transform .4s ease
+.move-t-enter, .move-t-leave-to
+  transform translate3d(0, 100%, 0)
