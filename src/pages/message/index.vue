@@ -1,21 +1,38 @@
 <template>
   <IndexWrapper>
-    <div class="message">
-      <div class="content pos">
-        <div v-for="(item, index) in rooms" @click="goChat(item.roomId)">
-          <div v-if="item.type === 0">{{ item.users.remark ? item.users.remark : item.users.nikename ? item.users.nikename : item.users.phone }}</div>
+    <scroll ref="scroll">
+      <div class="message">
+        <div class="content pos">
+          <cell v-for="(item, index) in rooms"
+                :key="item.roomId"
+                ref="cell"
+                :room="item"
+                @controll-scroll="controllScroll"
+                @my-click="goChat(item.roomId)"></cell>
         </div>
       </div>
-    </div>
+    </scroll>
   </IndexWrapper>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
   import IndexWrapper from 'components/index_wrapper'
+  import Cell from 'components/cell'
+  import Scroll from 'components/scroll'
 
   export default {
     name: 'message',
+    mounted () {
+      this.$nextTick(() => {
+        const cells = this.$refs.cell
+        document.addEventListener('touchstart', () => {
+          for (let i = 0; i < cells.length; i++) {
+            cells[i].reset()
+          }
+        })
+      })
+    },
     data () {
       return {
         tab: 'message'
@@ -33,10 +50,21 @@
             roomId
           }
         })
+      },
+      controllScroll (v) {
+        console.log(11)
+        if (v) {
+          this.$refs.scroll.disable()
+          console.log(456456)
+        } else {
+          this.$refs.scroll.enable()
+        }
       }
     },
     components: {
-      IndexWrapper
+      IndexWrapper,
+      Cell,
+      Scroll
     }
   }
 </script>
@@ -46,5 +74,4 @@
 
   .message
     min-height calc(100vh - 94px)
-    line-height 30px
 </style>

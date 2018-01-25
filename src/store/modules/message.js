@@ -59,6 +59,15 @@ const mutations = {
     const room = state.rooms.find(o => o.roomId === nextRoomId)
     room.roomId = roomId
     Utils.setLocal('rooms', state.rooms)
+  },
+  [types.SET_MSG_READ] (state, roomId) {
+    const room = state.rooms.find(o => o.roomId === roomId)
+    for (let i = 0; i < room.message.length; i++) {
+      if (room.message[i].fromId === room.users.wechat_id) {
+        room.message[i].isRead = 1
+      }
+    }
+    Utils.setLocal('rooms', state.rooms)
   }
 }
 
@@ -68,7 +77,7 @@ const actions = {
     commit(types.SET_ADD_FRIEND_MSG_READ)
   },
   updateMsg ({commit, rootState}, data) {
-    if (data.users === undefined || data.message === undefined) {
+    if (data.users === undefined && data.message === undefined) {
       const newData = {
         roomId: data.roomId,
         type: 0,

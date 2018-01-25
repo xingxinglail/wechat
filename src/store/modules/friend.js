@@ -24,7 +24,8 @@ const actions = {
       commit(types.SET_ADD_FRIEND, fromObj)
       commit(types.UPDATE_ADD_FRIEND_MSG, fromObj.wechat_id)
       return {
-        code: 1
+        code: 1,
+        data: res.data.data
       }
     } else {
       return {

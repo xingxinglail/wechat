@@ -21,10 +21,16 @@
     name: 'we-head',
     props: {
       leftController: { // 包含显示隐藏,标题
-        type: Object
+        type: Object,
+        default () {
+          return {}
+        }
       },
       rightController: { // 包含显示隐藏,icon
-        type: Object
+        type: Object,
+        default () {
+          return {}
+        }
       },
       title: {
         type: String
@@ -49,7 +55,7 @@
   @import "~assets/stylus/variable.styl"
 
   .head
-    position absolute
+    position fixed
     top 0
     left 0
     right 0

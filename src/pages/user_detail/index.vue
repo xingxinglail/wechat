@@ -69,6 +69,7 @@
                        v-show="showAdd"
                        :user-id="userDetail.wechat_id"
                        :show="showAdd"
+                       :name="user.nikename ? user.nikename : user.phone"
                        @cloes="onCloesSend"></send-add-friend>
     </transition>
     <toast :toast-data="toastData"></toast>
@@ -116,7 +117,7 @@
       }
     },
     methods: {
-      ...mapActions(['accept']),
+      ...mapActions(['accept', 'updateMsg']),
       async dontRefresh () { // 防止刷新或无数据
         const data = Utils.getSession('user_detail')
         if (!data) {
@@ -165,6 +166,7 @@
         if (res.code === 1) {
           this.toastData.type = 'success'
           this.toastData.text = '添加成功'
+          this.updateMsg(res.data)
           await Utils.delay(400)
         } else {
           alert(res.msg)
@@ -183,7 +185,8 @@
         this.$router.push({
           path: `${this.$route.path}/chat`,
           query: {
-            roomId: room.roomId
+            roomId: room.roomId,
+            userId: room.roomId === '0' ? this.userDetail.wechat_id : ''
           }
         })
       }

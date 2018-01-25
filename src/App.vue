@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app">
+  <div id="app" class="app absolute">
     <transition :name="transitionName">
       <keep-alive>
         <router-view />
@@ -33,17 +33,17 @@
 
 <style lang="stylus" scoped>
   .app
-    position absolute
-    top 0
-    right 0
-    bottom 0
-    left 0
     overflow hidden
+
   .slide-left-enter-active, .slide-right-leave-active
     z-index 9999
 
   .slide-left-enter-active, .slide-left-leave-active,
   .slide-right-enter-active, .slide-right-leave-active
+    position absolute
+    width 100%
+    top 0
+    left 0
     transition transform .4s ease
 
   .slide-left-enter, .slide-right-leave-to

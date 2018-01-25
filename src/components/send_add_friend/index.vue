@@ -79,12 +79,11 @@
       async onRightClick () {
         this.toastData.show = true
         await Utils.delay(1000)
-        const res = await addFriend.addFriend({
+        await addFriend.addFriend({
           fromId: this.user.wechat_id,
           userId: this.userId,
-          message: this.message
+          message: this.message ? this.message : `我是${this.name}`
         })
-        console.log(res.data)
         this.toastData.type = 'success'
         this.toastData.text = '已发送'
         await Utils.delay(500)
@@ -101,6 +100,8 @@
           this.$nextTick(() => {
             this.$refs.scroll.refresh()
           })
+        } else {
+          this.message = `我是${this.name}`
         }
       }
     },

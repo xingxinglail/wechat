@@ -81,7 +81,7 @@ export default new Router({
       path: '/chat',
       name: 'ChatOne',
       component: ChatOne,
-      alias: ['/message/chat', '/address/userdetail/chat'],
+      alias: ['/message/chat', '/message/addfriend/userdetail/chat', '/address/userdetail/chat', '/address/newfriend/userdetail/chat'],
       meta: {
         auth: true
       }

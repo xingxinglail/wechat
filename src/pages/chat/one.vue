@@ -4,12 +4,12 @@
              :title="headController.title"
              :left-controller="headController.leftController"
              :right-controller="headController.rightController"></we-head>
-    <div class="content-wrappre absolute" v-if="room">
-      <scroll>
+    <div class="content-wrappre absolute" ref="content">
+      <scroll ref="scroll">
         <div class="inner">
-          <ul>
-            <li v-for="(item, index) in room.message" :key="index">
-              <div class="time flexbox"><span class="timer">{{ item.time }}</span></div>
+          <ul v-if="room">
+            <li v-for="(item, index) in room.message" ref="li" :key="index">
+              <div class="time flexbox"><span class="timer">{{ dateFormat(item.time) }}</span></div>
               <div class="message">
                 <div v-if="item.fromId === user.wechat_id" class="my flexbox">
                   <div class="text">{{ item.text }}</div>
@@ -31,7 +31,7 @@
         </div>
       </scroll>
     </div>
-    <div class="footer flexbox">
+    <div class="footer flexbox" ref="footer">
       <div class="border-t-1px"></div>
       <p @click="send">发送</p>
       <textarea ref="textarea" v-model="message"></textarea>
@@ -47,14 +47,19 @@
   import headConfig from 'config/index_head'
   import Utils from 'utils/util'
   import Room from 'api/room'
+  import Message from 'api/message'
 
   export default {
     name: 'chat-one',
     mounted () {
       this.$nextTick(() => {
+        this.scroll = this.$refs.scroll
         autosize(this.$refs.textarea)
+        this.content = this.$refs.content
+        this.footer = this.$refs.footer
         this.$refs.textarea.addEventListener('autosize:resized', () => {
-          console.log('textarea height updated')
+          this.content.style.bottom = `${this.footer.offsetHeight}px`
+          this.initScroll()
         })
       })
     },
@@ -64,6 +69,10 @@
       } else {
         this.roomId = this.$route.query.roomId
       }
+      if (this.room) {
+        this.read()
+      }
+      this.initScroll()
     },
     data () {
       return {
@@ -72,7 +81,7 @@
       }
     },
     computed: {
-      ...mapGetters(['user', 'rooms']),
+      ...mapGetters(['user', 'rooms', 'friends']),
       headController () { // 头部配置
         if (this.room) {
           if (this.room.type === 0) {
@@ -85,7 +94,11 @@
             return headConfig['/chat']
           }
         } else {
-          return null
+          const userId = this.$route.query.userId
+          if (!userId) return null
+          const user = this.friends.find(o => o.wechat_id === userId)
+          headConfig['/chat'].title = user.remark ? user.remark : user.nikename ? user.nikename : user.phone
+          return headConfig['/chat']
         }
       },
       room () {
@@ -96,14 +109,15 @@
     },
     methods: {
       ...mapMutations({
-        updateRoomId: 'SET_UPDATE_ROOMID'
+        updateRoomId: 'SET_UPDATE_ROOMID',
+        msgRead: 'SET_MSG_READ'
       }),
       ...mapActions(['updateMsg']),
       async send () {
         const message = this.message
+        this.message = ''
         if (message.trim() === '') {
           alert('不能发送空白消息!')
-          this.message = ''
           return
         }
         if (!this.room) { // 创建房间
@@ -128,6 +142,7 @@
             text: message,
             time: data.message[0].time
           }
+          this.message = ''
           const res = await Room.createRoom(createRoomData)
           if (res.data.code === 1) {
             this.updateRoomId({
@@ -143,8 +158,56 @@
             })
           }
         } else {
-          console.log('直接发送')
+          const time = moment().format('YYYY-MM-DD HH:mm:ss')
+          const saveMsg = {
+            roomId: this.room.roomId,
+            fromId: this.user.wechat_id,
+            userId: this.room.users.wechat_id,
+            text: message,
+            time,
+            message: true
+          }
+          const sendMsg = {
+            roomId: this.room.roomId,
+            fromId: this.user.wechat_id,
+            userId: this.room.users.wechat_id,
+            text: message,
+            MCreateTime: time
+          }
+          this.updateMsg(saveMsg)
+          const res = await Message.send(sendMsg)
+          console.log(res)
         }
+      },
+      async read () { // 设置所有消息为已读
+        const noRead = this.room.message.find(o => o.isRead === 0 && o.userId === this.user.wechat_id)
+        if (noRead) {
+          this.msgRead(this.room.roomId)
+          const res = await Message.readMsg({roomId: this.room.roomId, userId: this.user.wechat_id})
+          console.log(res)
+        }
+      },
+      initScroll () {
+        if (this.scroll) {
+          this.scroll.refresh()
+          this.scroll.scrollToElement(this.$refs.li[this.room.message.length - 1], 0, true, true)
+        }
+      },
+      dateFormat (time) {
+        return Utils.dateFormat(time)
+      }
+    },
+    watch: {
+      room: {
+        handler (v) {
+          if (v) {
+            this.read()
+            this.$nextTick(() => {
+              this.initScroll()
+            })
+          }
+        },
+        deep: true
       }
     },
     components: {
@@ -164,6 +227,7 @@
       bottom 43px
       .inner
         min-height calc(100vh - 92px)
+        padding-bottom 10px
         ul
           padding 0 2%
           li

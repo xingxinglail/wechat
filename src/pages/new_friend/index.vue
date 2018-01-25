@@ -63,10 +63,11 @@
       this.init()
     },
     methods: {
-      ...mapActions(['setAddFriendMsgRead', 'accept']),
-      init () { // 判断是否有未读消息,如果有就发送请求
+      ...mapActions(['setAddFriendMsgRead', 'accept', 'updateMsg']),
+      async init () { // 判断是否有未读消息,如果有就发送请求
         const item = this.addFriendMsg.find(o => o.isRead === 0)
         if (item) {
+          await Utils.delay(400)
           this.setAddFriendMsgRead(this.user.wechat_id)
         }
       },
@@ -93,6 +94,7 @@
         if (res.code === 1) {
           this.toastData.type = 'success'
           this.toastData.text = '添加成功'
+          this.updateMsg(res.data)
           await Utils.delay(400)
         } else {
           alert(res.msg)

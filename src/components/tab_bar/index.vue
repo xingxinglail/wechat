@@ -89,7 +89,7 @@
 
 <style lang='stylus' scoped>
   .weui-tab
-    position absolute
+    position fixed
     width 100%
     left 0
     bottom 0

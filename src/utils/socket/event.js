@@ -14,10 +14,12 @@ function socketEvent (socket) {
   })
 
   // 通过好友请求
-  socket.on('accept', async ({userId}) => {
+  socket.on('accept', async (data) => {
     console.log('socket:on ---> accept')
-    const userRes = await User.findUserByWechatId({wechat_id: userId})
+    const userRes = await User.findUserByWechatId({wechat_id: data.userId})
     store.commit(types.SET_ADD_FRIEND, userRes.data)
+    data.userId = data.nowUserId
+    store.dispatch('updateMsg', data)
   })
 
   // 聊天消息

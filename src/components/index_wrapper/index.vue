@@ -6,9 +6,7 @@
              :right-controller="headController.rightController"
              @right-click="onheadrightclick"></we-head>
     <div class="content-wrapper">
-      <scroll>
-        <slot></slot>
-      </scroll>
+      <slot></slot>
     </div>
     <tab-bar :tab="tab"></tab-bar>
     <transition name="fade">
@@ -36,7 +34,6 @@
 
 <script>
   import TabBar from 'components/tab_bar'
-  import Scroll from 'components/scroll'
   import headConfig from 'config/index_head'
 
   export default {
@@ -86,11 +83,13 @@
           return '通讯录'
         }
         return ''
+      },
+      controllScroll (v) {
+        console.log(v)
       }
     },
     components: {
-      TabBar,
-      Scroll
+      TabBar
     }
   }
 </script>

@@ -10,6 +10,8 @@ export const SET_ONE_ADD_FRIEND_MSG = 'SET_ONE_ADD_FRIEND_MSG' // 添加一个�
 
 export const SET_ADD_FRIEND_MSG_READ = 'SET_ADD_FRIEND_MSG_READ' // 设置好友添加请求消息为已读
 
+export const SET_MSG_READ = 'SET_MSG_READ' // 设置消息为已读
+
 export const SET_FRIENDS = 'SET_FRIENDS' // 设置好友列表
 
 export const SET_ADD_FRIEND = 'SET_ADD_FRIEND' // 添加一个好友
